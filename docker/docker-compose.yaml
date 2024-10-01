@@ -1,0 +1,26 @@
+services:
+  web:
+    image: webgoat/webgoat:v2023.8
+    ports:
+      - "8080:8080"
+      - "9090:9090"
+    networks: 
+      - goat
+    tty: true
+  owasp:
+    image: zaproxy/zap-stable:2.15.0
+    command: bash -c "zap.sh -cmd -addonuninstall hud && zap-webswing.sh"
+    volumes: 
+      - ./zap:/zap/wrk/
+    ports:
+      - "8081:8080"
+      - "8090:8090"
+    depends_on:
+      - web
+    networks: 
+      - goat
+      - default
+    tty: true
+networks:
+  goat:
+    internal: true
